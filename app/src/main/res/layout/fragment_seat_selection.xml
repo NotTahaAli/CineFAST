@@ -9,7 +9,7 @@
     android:background="@color/background"
     android:orientation="vertical"
     android:layout_marginTop="-30dp"
-    android:layout_marginBottom="-60dp">
+    android:layout_marginBottom="-30dp">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -288,8 +288,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:backgroundTint="@color/primary"
-            android:textColor="@color/text_primary"
+            app:backgroundTint="@color/btn_primary_bg"
+            android:textColor="@color/btn_primary_txt"
             android:text="@string/book_seats"
             android:textSize="16sp"
             android:id="@+id/bookBtn"/>

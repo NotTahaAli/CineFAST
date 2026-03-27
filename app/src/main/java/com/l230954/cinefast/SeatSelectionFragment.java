@@ -41,7 +41,7 @@ public class SeatSelectionFragment extends Fragment {
     ImageView btnBack, ivBackground;
     TextView tvTheater, tvHall, tvDate, tvTime, tvScreen, tvTitle;
     GridLayout grid;
-    ImageView selectedSeat, placeholderSeat, availableSeat, bookedSeat;
+    ImageView selectedSeat, placeholderSeat, availableSeat, bookedSeat, disabledSeat;
     HashMap<Character, HashMap<Integer, Boolean>> seatSelectionMap;
     int selectedCount;
 
@@ -183,6 +183,10 @@ public class SeatSelectionFragment extends Fragment {
         bookedSeat = new ImageView(activity);
         bookedSeat.setImageResource(R.drawable.seat_booked);
         bookedSeat.setLayoutParams(params);
+
+        disabledSeat = new ImageView(activity);
+        disabledSeat.setImageResource(R.drawable.seat_disabled);
+        disabledSeat.setLayoutParams(params);
     }
 
     private void addSeat(ImageView seat) {
@@ -243,12 +247,16 @@ public class SeatSelectionFragment extends Fragment {
         int seatNumber = 1;
         for (int col = 0; col < 9; col++) {
             if (((col == 0 || col == 8) && (row == 0 || row == 7)) || col == 4) continue;
-            int randomVal = (int) (Math.random()*10);
-            if (randomVal < 8 || !isToday) {
-                ImageView placedSeat = placeSeat(row, col, availableSeat);
-                if (isToday) hookSeatClick(placedSeat, row, col, seatNumber);
+            if (!isToday) {
+                placeSeat(row, col, disabledSeat);
             } else {
-                placeSeat(row, col, bookedSeat);
+                int randomVal = (int) (Math.random() * 10);
+                if (randomVal < 8) {
+                    ImageView placedSeat = placeSeat(row, col, availableSeat);
+                    if (isToday) hookSeatClick(placedSeat, row, col, seatNumber);
+                } else {
+                    placeSeat(row, col, bookedSeat);
+                }
             }
             seatNumber++;
         }
