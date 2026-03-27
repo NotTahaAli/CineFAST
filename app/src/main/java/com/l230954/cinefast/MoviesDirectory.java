@@ -1,7 +1,5 @@
 package com.l230954.cinefast;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 
 import java.util.ArrayList;
@@ -68,11 +66,5 @@ public class MoviesDirectory {
 
     public static int getMovieIndex(Movies movie) {
         return movies.indexOf(movie) + 1;
-    }
-    public static void ShowBooking(Context c, int id, String date) {
-        Intent i = new Intent(c, SeatSelectionActivity.class);
-        i.putExtra("id_key", id);
-        i.putExtra("date_key", date);
-        c.startActivity(i);
     }
 }

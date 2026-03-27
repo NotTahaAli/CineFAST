@@ -1,15 +1,19 @@
 package com.l230954.cinefast;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.bookingHandler {
+public class MainActivity extends AppCompatActivity implements FragmentController {
+
+    FragmentManager fragManager;
+    HomeFragment fragHome;
+    SeatSelectionFragment fragSeatSelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +25,39 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.boo
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        init();
+
+        showHome();
+    }
+
+    private void init() {
+        fragManager = getSupportFragmentManager();
+        fragHome = (HomeFragment) fragManager.findFragmentById(R.id.fragHome);
+        fragSeatSelection = (SeatSelectionFragment) fragManager.findFragmentById(R.id.fragSeatSelection);
     }
 
     @Override
     public void showBooking(Movies movie, String date) {
-        Toast.makeText(this, "Booking for " + movie.name, Toast.LENGTH_SHORT).show();
+        Bundle args = new Bundle();
+        args.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
+        args.putString("date_key", date);
+        fragSeatSelection.setArguments(args);
+        fragManager.beginTransaction()
+                .hide(fragHome)
+                .show(fragSeatSelection)
+                .addToBackStack("home")
+                .commit();
+    }
+
+    @Override
+    public void showHome() {
+        if (fragManager.getBackStackEntryCount() > 0) {
+            fragManager.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        fragManager.beginTransaction()
+                .show(fragHome)
+                .hide(fragSeatSelection)
+                .commit();
     }
 }

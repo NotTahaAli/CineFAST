@@ -1,36 +1,41 @@
 package com.l230954.cinefast;
 
+import static android.app.Activity.RESULT_CANCELED;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
-public class SeatSelectionActivity extends AppCompatActivity {
+public class SeatSelectionFragment extends Fragment {
 
+    Activity activity;
     int movieId;
     Movies movie;
     String date;
+    boolean isToday;
+
+    FragmentController controller;
 
     MaterialButton snacksBtn, bookBtn;
     ImageView btnBack, ivBackground;
@@ -43,75 +48,104 @@ public class SeatSelectionActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> snacksLauncher;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_seat_selection);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+    public void setArguments(@Nullable Bundle args) {
+        super.setArguments(args);
+        loadDate();
+        hookButtons();
+        setMovieData();
+        populateGrid();
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_seat_selection, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         snacksLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 this::handleSnacksResult
         );
+        activity = requireActivity();
 
-        init();
-        loadData();
+        init(view);
+        loadDate();
         hookButtons();
         setMovieData();
         loadViews();
         populateGrid();
     }
 
-    private void hookButtons() {
-        btnBack.setOnClickListener(v->{
-            finish();
-        });
-        bookBtn.setOnClickListener(v->{
-            if (selectedCount <= 0) {
-                Toast.makeText(this, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            confirmBooking(null);
-        });
-        snacksBtn.setOnClickListener(v->{
-            if (selectedCount <= 0) {
-                Toast.makeText(this, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            snacksLauncher.launch(new Intent(this, SnacksActivity.class));
-        });
-    }
-
-    private void init() {
-        snacksBtn = findViewById(R.id.snacksBtn);
-        bookBtn = findViewById(R.id.bookBtn);
-        btnBack = findViewById(R.id.btnBack);
-        ivBackground = findViewById(R.id.ivBackground);
-
-        tvDate = findViewById(R.id.tvDate);
-        tvTheater = findViewById(R.id.tvTheater);
-        tvHall = findViewById(R.id.tvHall);
-        tvTime = findViewById(R.id.tvTime);
-        tvTitle = findViewById(R.id.tvTitle);
-        tvScreen = findViewById(R.id.tvScreen);
-
-        grid = findViewById(R.id.grid);
-    }
-    private void loadData() {
-        Intent i = getIntent();
-        if (i == null) {
-            finish();
-            return;
+    private void loadDate() {
+        Bundle args = this.getArguments();
+        if (args == null) {
+            movieId = 0;
+            date = CalenderHelper.GetDate(0);
+        } else {
+            movieId = args.getInt("id_key", 0);
+            date = args.getString("date_key");
         }
-        movieId = i.getIntExtra("id_key", 0);
-        date = i.getStringExtra("date_key");
-        if (date == null) finish();
+        if (date == null) activity.finish();
+
+        isToday = date.equals(CalenderHelper.GetDate(0));
 
         movie = MoviesDirectory.getMovie(movieId);
+    }
+
+    private void hookButtons() {
+        btnBack.setOnClickListener(v-> controller.showHome());
+        if (isToday) {
+            bookBtn.setText(R.string.book_seats);
+            bookBtn.setEnabled(true);
+            bookBtn.setOnClickListener(v -> {
+                if (selectedCount <= 0) {
+                    Toast.makeText(activity, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                confirmBooking(null);
+            });
+            snacksBtn.setText(R.string.button_snack);
+            snacksBtn.setOnClickListener(v -> {
+                if (selectedCount <= 0) {
+                    Toast.makeText(activity, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                snacksLauncher.launch(new Intent(activity, SnacksActivity.class));
+            });
+        } else {
+            bookBtn.setText(R.string.coming_soon);
+            bookBtn.setEnabled(false);
+            snacksBtn.setText(R.string.trailer);
+            snacksBtn.setOnClickListener(v -> {
+                try {
+                    Intent i = Intent.parseUri(movie.trailer.toString(), 0);
+                    activity.startActivity(i);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
+    private void init(View parentView) {
+        snacksBtn = parentView.findViewById(R.id.snacksBtn);
+        bookBtn = parentView.findViewById(R.id.bookBtn);
+        btnBack = parentView.findViewById(R.id.btnBack);
+        ivBackground = parentView.findViewById(R.id.ivBackground);
+
+        tvDate = parentView.findViewById(R.id.tvDate);
+        tvTheater = parentView.findViewById(R.id.tvTheater);
+        tvHall = parentView.findViewById(R.id.tvHall);
+        tvTime = parentView.findViewById(R.id.tvTime);
+        tvTitle = parentView.findViewById(R.id.tvTitle);
+        tvScreen = parentView.findViewById(R.id.tvScreen);
+
+        grid = parentView.findViewById(R.id.grid);
+
+        controller = (FragmentController) this.getActivity();
     }
 
     private void setMovieData() {
@@ -134,32 +168,32 @@ public class SeatSelectionActivity extends AppCompatActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(scale, scale);
         params.setMargins(margin, margin, margin, margin);
 
-        selectedSeat = new ImageView(this);
+        selectedSeat = new ImageView(activity);
         selectedSeat.setImageResource(R.drawable.seat_selected);
         selectedSeat.setLayoutParams(params);
 
-        placeholderSeat = new ImageView(this);
+        placeholderSeat = new ImageView(activity);
         placeholderSeat.setImageResource(R.drawable.seat_placeholder);
         placeholderSeat.setLayoutParams(params);
 
-        availableSeat = new ImageView(this);
+        availableSeat = new ImageView(activity);
         availableSeat.setImageResource(R.drawable.seat_available);
         availableSeat.setLayoutParams(params);
 
-        bookedSeat = new ImageView(this);
+        bookedSeat = new ImageView(activity);
         bookedSeat.setImageResource(R.drawable.seat_booked);
         bookedSeat.setLayoutParams(params);
     }
 
     private void addSeat(ImageView seat) {
-        ImageView newSeat = new ImageView(this);
+        ImageView newSeat = new ImageView(activity);
         newSeat.setImageDrawable(seat.getDrawable());
         newSeat.setLayoutParams(seat.getLayoutParams());
 
         grid.addView(newSeat);
     }
     private ImageView setSeat(ImageView seat, int index) {
-        ImageView newSeat = new ImageView(this);
+        ImageView newSeat = new ImageView(activity);
         newSeat.setImageDrawable(seat.getDrawable());
         newSeat.setLayoutParams(seat.getLayoutParams());
 
@@ -187,15 +221,17 @@ public class SeatSelectionActivity extends AppCompatActivity {
             if (!seatSelectionMap.containsKey(rowLetter)) {
                 seatSelectionMap.put(rowLetter, new HashMap<>());
             }
-            if (!seatSelectionMap.get(rowLetter).containsKey(seatNumber)) {
-                seatSelectionMap.get(rowLetter).put(seatNumber, false);
+            var seatRow = seatSelectionMap.get(rowLetter);
+            assert seatRow != null;
+            if (!seatRow.containsKey(seatNumber)) {
+                seatRow.put(seatNumber, false);
             }
-            if (seatSelectionMap.get(rowLetter).get(seatNumber)) {
-                seatSelectionMap.get(rowLetter).put(seatNumber, false);
+            if (Boolean.TRUE.equals(seatRow.get(seatNumber))) {
+                seatRow.put(seatNumber, false);
                 selectedCount--;
                 newSeat = placeSeat(row, col, availableSeat);
             } else {
-                seatSelectionMap.get(rowLetter).put(seatNumber, true);
+                seatRow.put(seatNumber, true);
                 selectedCount++;
                 newSeat = placeSeat(row, col, selectedSeat);
             }
@@ -208,9 +244,9 @@ public class SeatSelectionActivity extends AppCompatActivity {
         for (int col = 0; col < 9; col++) {
             if (((col == 0 || col == 8) && (row == 0 || row == 7)) || col == 4) continue;
             int randomVal = (int) (Math.random()*10);
-            if (randomVal < 8) {
+            if (randomVal < 8 || !isToday) {
                 ImageView placedSeat = placeSeat(row, col, availableSeat);
-                hookSeatClick(placedSeat, row, col, seatNumber);
+                if (isToday) hookSeatClick(placedSeat, row, col, seatNumber);
             } else {
                 placeSeat(row, col, bookedSeat);
             }
@@ -235,11 +271,13 @@ public class SeatSelectionActivity extends AppCompatActivity {
     }
 
     private void confirmBooking(@Nullable HashMap<String, Integer> snacks) {
-        Intent i = new Intent(this, BookingConfirmationActivity.class);
+        Intent i = new Intent(activity, BookingConfirmationActivity.class);
         ArrayList<String> seats = new ArrayList<>();
         for (char row: seatSelectionMap.keySet()) {
-            for (int seat: seatSelectionMap.get(row).keySet()) {
-                if (seatSelectionMap.get(row).get(seat) == true) {
+            var seatRow = seatSelectionMap.get(row);
+            assert seatRow != null;
+            for (int seat: seatRow.keySet()) {
+                if (Boolean.TRUE.equals(seatRow.get(seat))) {
                     seats.add("Row " + row + ", Seat " + seat);
                 }
             }
@@ -249,6 +287,6 @@ public class SeatSelectionActivity extends AppCompatActivity {
                 .putExtra("seats_key", seats)
                 .putExtra("snacks_key", snacks);
         startActivity(i);
-        finish();
+        controller.showHome();
     }
 }

@@ -16,13 +16,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
-    public interface bookingHandler {
-        void showBooking(Movies movie, String date);
-    }
     ArrayList<Movies> movies;
     String date;
-    bookingHandler handler;
-    public MoviesAdapter(@NonNull ArrayList<Movies> objects, String date, bookingHandler handler) {
+    FragmentController handler;
+    public MoviesAdapter(@NonNull ArrayList<Movies> objects, String date, FragmentController handler) {
         this.movies = objects;
         this.date = date;
         this.handler = handler;
