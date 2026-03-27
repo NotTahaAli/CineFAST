@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,11 +42,10 @@ public class SeatSelectionFragment extends Fragment {
     HashMap<Character, HashMap<Integer, Boolean>> seatSelectionMap;
     int selectedCount;
 
-    ActivityResultLauncher<Intent> snacksLauncher;
-
     @Override
     public void setArguments(@Nullable Bundle args) {
         super.setArguments(args);
+        if (args == null) return;
         loadDate();
         hookButtons();
         setMovieData();
@@ -65,10 +61,6 @@ public class SeatSelectionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        snacksLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                this::handleSnacksResult
-        );
         activity = requireActivity();
 
         init(view);
@@ -105,7 +97,7 @@ public class SeatSelectionFragment extends Fragment {
                     Toast.makeText(activity, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                confirmBooking(null);
+                confirmBooking(false);
             });
             snacksBtn.setText(R.string.button_snack);
             snacksBtn.setOnClickListener(v -> {
@@ -113,7 +105,7 @@ public class SeatSelectionFragment extends Fragment {
                     Toast.makeText(activity, "Please select at least one seat to book", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                snacksLauncher.launch(new Intent(activity, SnacksActivity.class));
+                confirmBooking(true);
             });
         } else {
             bookBtn.setText(R.string.coming_soon);
@@ -270,16 +262,7 @@ public class SeatSelectionFragment extends Fragment {
         }
     }
 
-    private void handleSnacksResult(ActivityResult result) {
-        if (result.getResultCode() == RESULT_CANCELED) return;
-        Intent i = result.getData();
-        if (i == null) return;
-        HashMap<String, Integer> snacks = (HashMap<String, Integer>) i.getSerializableExtra("snacks_key");
-        confirmBooking(snacks);
-    }
-
-    private void confirmBooking(@Nullable HashMap<String, Integer> snacks) {
-        Intent i = new Intent(activity, BookingConfirmationActivity.class);
+    private void confirmBooking(Boolean askSnacks) {
         ArrayList<String> seats = new ArrayList<>();
         for (char row: seatSelectionMap.keySet()) {
             var seatRow = seatSelectionMap.get(row);
@@ -290,11 +273,10 @@ public class SeatSelectionFragment extends Fragment {
                 }
             }
         }
-        i.putExtra("id_key", movieId)
-                .putExtra("date_key", date)
-                .putExtra("seats_key", seats)
-                .putExtra("snacks_key", snacks);
-        startActivity(i);
-        controller.showHome();
+        if (askSnacks) {
+            controller.showSnacks(movie, date, seats);
+        } else {
+            controller.showBookingConfirmation(movie, date, seats, null);
+        }
     }
 }

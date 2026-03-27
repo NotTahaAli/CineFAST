@@ -34,14 +34,11 @@
     <string name="confirm">Confirm</string>
     <string name="snacks1">Popcorn</string>
     <string name="snacks1_description">Large/Buttered</string>
-    <string name="snacks1_price">$2.99</string>
     <string name="snacks2">Nachos</string>
     <string name="snacks2_description">With Cheese Dip</string>
-    <string name="snacks2_price">$2.99</string>
     <string name="snacks3">Soft Drink</string>
     <string name="snacks3_description">Large/Any Flavor</string>
-    <string name="snacks3_price">$2.99</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="snacks4">Fries</string>
+    <string name="snacks4_description">Large</string>
     <string name="movie_title_image">Movie Title Image</string>
 </resources>

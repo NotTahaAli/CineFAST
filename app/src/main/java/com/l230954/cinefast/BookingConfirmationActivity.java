@@ -5,6 +5,7 @@ import static android.view.View.GONE;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.icu.text.NumberFormat;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,13 +24,12 @@ import java.util.HashMap;
 
 public class BookingConfirmationActivity extends AppCompatActivity {
     final float SEAT_COST = 16;
-    final float SNACK_COST = 2.99f;
 
     int movieId;
     Movies movie;
     String date;
     ArrayList<String> seats;
-    HashMap<String, Integer> snacks;
+    ArrayList<Snack> snacks;
 
     ImageView btnBack, ivMovie;
     TextView tvTheater, tvHall, tvDate, tvTime, tvScreen, tvTitle, tvTotal, tvTicketsDetails, tvTicketsPrices, tvSnacksDetails, tvSnacksPrices, tvSnacksHeader;
@@ -65,7 +65,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
 
         movie = MoviesDirectory.getMovie(movieId);
         seats = i.getStringArrayListExtra("seats_key");
-        snacks = (HashMap<String, Integer>) i.getSerializableExtra("snacks_key");
+        snacks = (ArrayList<Snack>) i.getSerializableExtra("snacks_key");
     }
 
     private void hookButtons() {
@@ -130,7 +130,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
             }
             first = false;
             Items.append(seat);
-            Prices.append(SEAT_COST).append(" USD");
+            Prices.append(CurrencyHelper.formatCurrency(SEAT_COST));
             totalCost += SEAT_COST;
         }
         tvTicketsDetails.setText(Items.toString());
@@ -139,16 +139,16 @@ public class BookingConfirmationActivity extends AppCompatActivity {
             first = true;
             Items = new StringBuilder();
             Prices = new StringBuilder();
-            for (String snack: snacks.keySet()) {
-                int count = snacks.get(snack);
+            for (Snack snack: snacks) {
+                int count = snack.quantity;
                 if (count == 0) continue;
                 if (!first) {
                     Items.append("\n");
                     Prices.append("\n");
                 }
-                Items.append("X").append(count).append(" ").append(snack);
-                Prices.append(SNACK_COST*count).append(" USD");
-                totalCost += SNACK_COST*count;
+                Items.append("X").append(count).append(" ").append(snack.name);
+                Prices.append(CurrencyHelper.formatCurrency(snack.price*count));
+                totalCost += snack.price*count;
                 first = false;
             }
             tvSnacksDetails.setText(Items.toString());
@@ -158,7 +158,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
             tvSnacksPrices.setVisibility(GONE);
             tvSnacksDetails.setVisibility(GONE);
         }
-        tvTotal.setText(totalCost + " USD");
+        tvTotal.setText(CurrencyHelper.formatCurrency(totalCost));
     }
 
     private String getTicketText() {
@@ -173,19 +173,20 @@ public class BookingConfirmationActivity extends AppCompatActivity {
                 .append("\n\n-------Seats------");
         for (String seat: seats) {
             text.append("\n").append(seat).append(" (")
-                    .append(SEAT_COST).append(" USD)");
+                    .append(CurrencyHelper.formatCurrency(SEAT_COST)).append(")");
             totalCost += SEAT_COST;
         }
         if (snacks != null) {
             text.append("\n\n-------Snacks------");
-            for (String snack: snacks.keySet()) {
-                int count = snacks.get(snack);
-                text.append("\nX").append(count).append(" ").append(snack)
-                        .append(" (").append(SNACK_COST*count).append(" USD)");
-                totalCost += SNACK_COST*count;
+            for (Snack snack: snacks) {
+                int count = snack.quantity;
+                if (count == 0) continue;
+                text.append("\nX").append(count).append(" ").append(snack.name)
+                        .append(" (").append(CurrencyHelper.formatCurrency(snack.price*count)).append(")");
+                totalCost += snack.price*count;
             }
         }
-        text.append("\n\n\nTOTAL: ").append(totalCost).append(" USD");
+        text.append("\n\n\nTOTAL: ").append(CurrencyHelper.formatCurrency(totalCost));
         return text.toString();
     }
 }

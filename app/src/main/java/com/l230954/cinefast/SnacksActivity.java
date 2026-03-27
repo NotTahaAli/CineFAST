@@ -3,6 +3,7 @@ package com.l230954.cinefast;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,14 +14,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SnacksActivity extends AppCompatActivity {
     MaterialButton btnConfirm;
-    HashMap<String, Integer> snacks;
-    TextView tvSnack1, tvSnack2, tvSnack3;
-    ImageView ivAddBtn1, ivAddBtn2, ivAddBtn3, ivRemoveBtn1, ivRemoveBtn2, ivRemoveBtn3;
-    int totalSnacks;
+    ArrayList<Snack> snacks;
+    ListView lvSnacks;
+    SnacksAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,107 +40,20 @@ public class SnacksActivity extends AppCompatActivity {
     private void hookButtons() {
         btnConfirm.setOnClickListener(v->{
             Intent i = new Intent();
-            if (totalSnacks > 0) {
-                i.putExtra("snacks_key", snacks);
-            }
+            i.putExtra("snacks_key", snacks);
             setResult(RESULT_OK, i);
             finish();
         });
-        ivAddBtn1.setOnClickListener(v->{
-            String name = getName(1);
-            int count = getCount(name);
-            ++count;
-            tvSnack1.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count > 0) ivRemoveBtn1.setImageResource(R.drawable.remove_active);
-            totalSnacks++;
-        });
-        ivAddBtn2.setOnClickListener(v->{
-            String name = getName(2);
-            int count = getCount(name);
-            ++count;
-            tvSnack2.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count > 0) ivRemoveBtn2.setImageResource(R.drawable.remove_active);
-            totalSnacks++;
-        });
-        ivAddBtn3.setOnClickListener(v->{
-            String name = getName(3);
-            int count = getCount(name);
-            ++count;
-            tvSnack3.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count > 0) ivRemoveBtn3.setImageResource(R.drawable.remove_active);
-            totalSnacks++;
-        });
-
-        ivRemoveBtn1.setOnClickListener(v->{
-            String name = getName(1);
-            int count = getCount(name);
-            if (count <= 0) return;
-            --count;
-            tvSnack1.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count <= 0) ivRemoveBtn1.setImageResource(R.drawable.remove);
-            totalSnacks++;
-        });
-        ivRemoveBtn2.setOnClickListener(v->{
-            String name = getName(2);
-            int count = getCount(name);
-            if (count <= 0) return;
-            --count;
-            tvSnack2.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count <= 0) ivRemoveBtn2.setImageResource(R.drawable.remove);
-            totalSnacks++;
-        });
-        ivRemoveBtn3.setOnClickListener(v->{
-            String name = getName(3);
-            int count = getCount(name);
-            if (count <= 0) return;
-            --count;
-            tvSnack3.setText(Integer.toString(count));
-            snacks.put(name, count);
-            if (count <= 0) ivRemoveBtn3.setImageResource(R.drawable.remove);
-            totalSnacks++;
-        });
     }
-
-    private String getName(int id) {
-        switch (id) {
-            case 1:
-                return getString(R.string.snacks1);
-            case 2:
-                return getString(R.string.snacks2);
-            case 3:
-                return getString(R.string.snacks3);
-            default:
-                return null;
-        }
-    }
-    private int getCount(String name) {
-        if (!snacks.containsKey(name)) {
-            snacks.put(name, 0);
-        }
-        return snacks.get(name);
-    }
-
     private void init() {
         btnConfirm = findViewById(R.id.btnConfirm);
-
-        totalSnacks = 0;
-        snacks = new HashMap<>();
-
-        tvSnack1 = findViewById(R.id.tvSnack1);
-        tvSnack2 = findViewById(R.id.tvSnack2);
-        tvSnack3 = findViewById(R.id.tvSnack3);
-
-        ivAddBtn1 = findViewById(R.id.ivAddBtn1);
-        ivAddBtn2 = findViewById(R.id.ivAddBtn2);
-        ivAddBtn3 = findViewById(R.id.ivAddBtn3);
-
-        ivRemoveBtn1 = findViewById(R.id.ivRemoveBtn1);
-        ivRemoveBtn2 = findViewById(R.id.ivRemoveBtn2);
-        ivRemoveBtn3 = findViewById(R.id.ivRemoveBtn3);
+        lvSnacks = findViewById(R.id.lvSnacks);
+        snacks = new ArrayList<>();
+        snacks.add(new Snack(getResources().getString(R.string.snacks1), 5.0f, getResources().getString(R.string.snacks1_description), R.drawable.snacks1));
+        snacks.add(new Snack(getResources().getString(R.string.snacks2), 10.0f, getResources().getString(R.string.snacks2_description), R.drawable.snacks2));
+        snacks.add(new Snack(getResources().getString(R.string.snacks3), 15.0f, getResources().getString(R.string.snacks3_description), R.drawable.snacks3));
+        snacks.add(new Snack(getResources().getString(R.string.snacks4), 2.5f, getResources().getString(R.string.snacks4_description), R.drawable.snacks4));
+        adapter = new SnacksAdapter(this, snacks);
+        lvSnacks.setAdapter(adapter);
     }
 }
