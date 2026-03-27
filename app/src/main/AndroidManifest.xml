@@ -14,9 +14,6 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".BookingConfirmationActivity"
-            android:exported="false" />
-        <activity
             android:name=".OnboardingActivity"
             android:exported="false" />
         <activity

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
     HomeFragment fragHome;
     SnacksFragment fragSnacks;
     SeatSelectionFragment fragSeatSelection;
+    BookingConfirmationFragment fragBookingConfirmation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragHome = (HomeFragment) fragManager.findFragmentById(R.id.fragHome);
         fragSeatSelection = (SeatSelectionFragment) fragManager.findFragmentById(R.id.fragSeatSelection);
         fragSnacks = (SnacksFragment) fragManager.findFragmentById(R.id.fragSnacks);
+        fragBookingConfirmation = (BookingConfirmationFragment) fragManager.findFragmentById(R.id.fragBookingConfirmation);
     }
 
     @Override
@@ -51,51 +53,54 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragSeatSelection.setArguments(args);
         fragManager.beginTransaction()
                 .hide(fragHome)
-                .show(fragSeatSelection)
+                .hide(fragBookingConfirmation)
                 .hide(fragSnacks)
-                .addToBackStack("home")
+                .show(fragSeatSelection)
+                .addToBackStack(null)
                 .commit();
     }
 
     @Override
     public void showHome() {
         if (fragManager.getBackStackEntryCount() > 0) {
-            fragManager.popBackStack("home", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragManager.popBackStack();
         }
         fragManager.beginTransaction()
-                .show(fragHome)
                 .hide(fragSeatSelection)
                 .hide(fragSnacks)
+                .hide(fragBookingConfirmation)
+                .show(fragHome)
                 .commit();
     }
 
     @Override
     public void showBookingConfirmation(Movies movie, String date, ArrayList<String> seats, ArrayList<Snack> snacks) {
-        showHome();
+        if (snacks != null && fragManager.getBackStackEntryCount() > 0) {
+            fragManager.popBackStack();
+        }
         Toast.makeText(this, "Booking Confirmed!", Toast.LENGTH_SHORT).show();
-        Intent i = new Intent(this, BookingConfirmationActivity.class);
-        i.putExtra("id_key", MoviesDirectory.getMovieIndex(movie))
-                .putExtra("date_key", date)
-                .putExtra("seats_key", seats)
-                .putExtra("snacks_key", snacks);
-        startActivity(i);
+        Bundle args = new Bundle();
+        args.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
+        args.putString("date_key", date);
+        args.putStringArrayList("seats_key", seats);
+        args.putSerializable("snacks_key", snacks);
+        fragBookingConfirmation.setArguments(args);
+        fragManager.beginTransaction()
+                .hide(fragSnacks)
+                .hide(fragSeatSelection)
+                .hide(fragHome)
+                .show(fragBookingConfirmation)
+                .commit();
     }
 
-    Movies movie;
-    String date;
-    ArrayList<String> seats;
     @Override
     public void showSnacks(Movies movie, String date, ArrayList<String> seats) {
-        this.movie = movie;
-        this.date = date;
-        this.seats = seats;
         Bundle arg = new Bundle();
         arg.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
         arg.putString("date_key", date);
         arg.putStringArrayList("seats_key", seats);
         fragSnacks.setArguments(arg);
         fragManager.beginTransaction()
-                .hide(fragHome)
                 .hide(fragSeatSelection)
                 .show(fragSnacks)
                 .addToBackStack(null)

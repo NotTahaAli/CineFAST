@@ -35,6 +35,12 @@ public class SnacksFragment extends Fragment {
         hookButtons();
     }
 
+    @Override
+    public void setArguments(@Nullable Bundle args) {
+        super.setArguments(args);
+        reset();
+    }
+
     private void hookButtons() {
         btnConfirm.setOnClickListener(v->{
             Bundle args = getArguments();
@@ -53,6 +59,10 @@ public class SnacksFragment extends Fragment {
         context = requireContext();
         btnConfirm = parent.findViewById(R.id.btnConfirm);
         lvSnacks = parent.findViewById(R.id.lvSnacks);
+        reset();
+    }
+
+    private void reset() {
         snacks = new ArrayList<>();
         snacks.add(new Snack(getResources().getString(R.string.snacks1), 5.0f, getResources().getString(R.string.snacks1_description), R.drawable.snacks1));
         snacks.add(new Snack(getResources().getString(R.string.snacks2), 10.0f, getResources().getString(R.string.snacks2_description), R.drawable.snacks2));

@@ -1,24 +1,27 @@
 package com.l230954.cinefast;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class BookingConfirmationActivity extends AppCompatActivity {
+public class BookingConfirmationFragment extends Fragment {
     final float SEAT_COST = 16;
 
     int movieId;
@@ -31,18 +34,27 @@ public class BookingConfirmationActivity extends AppCompatActivity {
     TextView tvTheater, tvHall, tvDate, tvTime, tvScreen, tvTitle, tvTotal, tvTicketsDetails, tvTicketsPrices, tvSnacksDetails, tvSnacksPrices, tvSnacksHeader;
     MaterialButton btnSend;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_booking_confirmation);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+    FragmentController controller;
+    Context context;
 
-        init();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_booking_confirmation, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        init(view);
+        loadData();
+        hookButtons();
+        setMovieData();
+        calculateAndSetBookingData();
+    }
+
+    @Override
+    public void setArguments(@Nullable Bundle args) {
+        super.setArguments(args);
         loadData();
         hookButtons();
         setMovieData();
@@ -50,22 +62,24 @@ public class BookingConfirmationActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        Intent i = getIntent();
-        if (i == null) {
-            finish();
-            return;
+        Bundle args = getArguments();
+        if (args == null) {
+            movieId = 0;
+            date = "";
+            seats = new ArrayList<>();
+            snacks = null;
+        } else {
+            movieId = args.getInt("id_key", 0);
+            date = args.getString("date_key");
+            seats = args.getStringArrayList("seats_key");
+            snacks = (ArrayList<Snack>) args.getSerializable("snacks_key");
         }
-        movieId = i.getIntExtra("id_key", 0);
-        date = i.getStringExtra("date_key");
-        if (date == null) finish();
 
         movie = MoviesDirectory.getMovie(movieId);
-        seats = i.getStringArrayListExtra("seats_key");
-        snacks = (ArrayList<Snack>) i.getSerializableExtra("snacks_key");
     }
 
     private void hookButtons() {
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> controller.showHome());
         btnSend.setOnClickListener(v->{
             Intent i = new Intent(Intent.ACTION_SEND);
             i.putExtra(Intent.EXTRA_TEXT, getTicketText());
@@ -74,32 +88,34 @@ public class BookingConfirmationActivity extends AppCompatActivity {
             
             Intent share = Intent.createChooser(i,  "Choose an App to Share Ticket");
 
-            if (share.resolveActivity(getPackageManager()) == null) {
-                Toast.makeText(this, "No sharing functionality on your device!", Toast.LENGTH_SHORT).show();
+            if (share.resolveActivity(context.getPackageManager()) == null) {
+                Toast.makeText(context, "No sharing functionality on your device!", Toast.LENGTH_SHORT).show();
             } else {
                 startActivity(share);
             }
         });
     }
 
-    private void init() {
-        btnBack = findViewById(R.id.btnBack);
-        btnSend = findViewById(R.id.btnSend);
+    private void init(View view) {
+        context = requireContext();
+        controller = (FragmentController) requireActivity();
+        btnBack = view.findViewById(R.id.btnBack);
+        btnSend = view.findViewById(R.id.btnSend);
 
-        ivMovie = findViewById(R.id.ivMovie);
-        tvDate = findViewById(R.id.tvDate);
-        tvTheater = findViewById(R.id.tvTheater);
-        tvHall = findViewById(R.id.tvHall);
-        tvTime = findViewById(R.id.tvTime);
-        tvTitle = findViewById(R.id.tvTitle);
-        tvScreen = findViewById(R.id.tvScreen);
+        ivMovie = view.findViewById(R.id.ivMovie);
+        tvDate = view.findViewById(R.id.tvDate);
+        tvTheater = view.findViewById(R.id.tvTheater);
+        tvHall = view.findViewById(R.id.tvHall);
+        tvTime = view.findViewById(R.id.tvTime);
+        tvTitle = view.findViewById(R.id.tvTitle);
+        tvScreen = view.findViewById(R.id.tvScreen);
 
-        tvTotal = findViewById(R.id.tvTotal);
-        tvTicketsDetails = findViewById(R.id.tvTicketsDetails);
-        tvTicketsPrices = findViewById(R.id.tvTicketsPrices);
-        tvSnacksHeader = findViewById(R.id.tvSnacksHeader);
-        tvSnacksDetails = findViewById(R.id.tvSnacksDetails);
-        tvSnacksPrices = findViewById(R.id.tvSnacksPrices);
+        tvTotal = view.findViewById(R.id.tvTotal);
+        tvTicketsDetails = view.findViewById(R.id.tvTicketsDetails);
+        tvTicketsPrices = view.findViewById(R.id.tvTicketsPrices);
+        tvSnacksHeader = view.findViewById(R.id.tvSnacksHeader);
+        tvSnacksDetails = view.findViewById(R.id.tvSnacksDetails);
+        tvSnacksPrices = view.findViewById(R.id.tvSnacksPrices);
     }
 
     private void setMovieData() {
@@ -147,6 +163,9 @@ public class BookingConfirmationActivity extends AppCompatActivity {
             }
             tvSnacksDetails.setText(Items.toString());
             tvSnacksPrices.setText(Prices.toString());
+            tvSnacksHeader.setVisibility(VISIBLE);
+            tvSnacksPrices.setVisibility(VISIBLE);
+            tvSnacksDetails.setVisibility(VISIBLE);
         } else {
             tvSnacksHeader.setVisibility(GONE);
             tvSnacksPrices.setVisibility(GONE);

@@ -9,12 +9,6 @@
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragHome"
-        android:name="com.l230954.cinefast.HomeFragment"
-        tools:layout="@layout/fragment_home"/>
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/fragSeatSelection"
         android:name="com.l230954.cinefast.SeatSelectionFragment"
         tools:layout="@layout/fragment_seat_selection"/>
@@ -24,4 +18,16 @@
         android:id="@+id/fragSnacks"
         android:name="com.l230954.cinefast.SnacksFragment"
         tools:layout="@layout/fragment_snacks"/>
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragBookingConfirmation"
+        android:name="com.l230954.cinefast.BookingConfirmationFragment"
+        tools:layout="@layout/fragment_booking_confirmation"/>
+    <androidx.fragment.app.FragmentContainerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragHome"
+        android:name="com.l230954.cinefast.HomeFragment"
+        tools:layout="@layout/fragment_home"/>
 </RelativeLayout>
