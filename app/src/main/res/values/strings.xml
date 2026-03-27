@@ -9,6 +9,7 @@
     <string name="onboarding_subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</string>
     <string name="select_date">Select Date</string>
     <string name="now_showing">Now Showing</string>
+    <string name="coming_soon">Coming Soon</string>
     <string name="book_seats">Book Seats</string>
     <string name="button_snack">Proceed to Snacks</string>
     <string name="theater_title">⚲ Theater</string>

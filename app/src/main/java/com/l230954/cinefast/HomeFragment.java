@@ -1,5 +1,7 @@
 package com.l230954.cinefast;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -19,6 +22,7 @@ public class HomeFragment extends Fragment {
     ViewPager2 vpMoviesList;
     ViewPagerAdapterForHomeFragment adapter;
     TabLayoutMediator mediator;
+    Context context;
 
     @Nullable
     @Override
@@ -36,17 +40,21 @@ public class HomeFragment extends Fragment {
         tabDateSelect = parentView.findViewById(R.id.tabDateSelect);
         vpMoviesList = parentView.findViewById(R.id.vpMoviesList);
         adapter = new ViewPagerAdapterForHomeFragment(this.requireActivity());
+        context = this.requireContext();
         vpMoviesList.setAdapter(adapter);
         mediator = new TabLayoutMediator(tabDateSelect, vpMoviesList, (tab, position) -> {
+            View customView = LayoutInflater.from(context).inflate(R.layout.date_selector_tab, null);
+            TextView tabText = customView.findViewById(R.id.tabText);
             switch (position)
             {
                 case 0:
-                    tab.setText(R.string.today);
+                    tabText.setText(R.string.today);
                     break;
                 case 1:
-                    tab.setText(R.string.tomorrow);
+                    tabText.setText(R.string.tomorrow);
                     break;
             }
+            tab.setCustomView(customView);
         });
 
         mediator.attach();
