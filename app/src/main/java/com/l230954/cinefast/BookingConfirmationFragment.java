@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -129,6 +130,7 @@ public class BookingConfirmationFragment extends Fragment {
     }
 
     private void calculateAndSetBookingData() {
+        if (movieId == 0) return;
         float totalCost = 0;
         StringBuilder Items = new StringBuilder();
         StringBuilder Prices = new StringBuilder();
@@ -172,6 +174,13 @@ public class BookingConfirmationFragment extends Fragment {
             tvSnacksDetails.setVisibility(GONE);
         }
         tvTotal.setText(CurrencyHelper.formatCurrency(totalCost));
+
+        SharedPreferences sPref = context.getSharedPreferences("last_booking", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString("name", movie.name);
+        editor.putInt("seats", seats.size());
+        editor.putFloat("total", totalCost);
+        editor.apply();
     }
 
     private String getTicketText() {

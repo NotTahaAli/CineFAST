@@ -41,4 +41,5 @@
     <string name="snacks4">Fries</string>
     <string name="snacks4_description">Large</string>
     <string name="movie_title_image">Movie Title Image</string>
+    <string name="view_last_booking">View Last Booking</string>
 </resources>

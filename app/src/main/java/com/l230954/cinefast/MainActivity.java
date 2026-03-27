@@ -1,6 +1,5 @@
 package com.l230954.cinefast;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
