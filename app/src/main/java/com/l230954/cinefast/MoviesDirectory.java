@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class MoviesDirectory {
 
@@ -46,8 +47,19 @@ public class MoviesDirectory {
                     "Hall 1",
                     "22:15")
     };
+
+    public static Movies[] getTodayMovies() {
+        Movies[] todayMovies = new Movies[movies.length-1];
+        System.arraycopy(movies, 0, todayMovies, 0, movies.length - 1);
+        return todayMovies;
+    }
+    public static Movies[] getTomorrowMovies() {
+        Movies[] tomorrowMovies = new Movies[movies.length-2];
+        System.arraycopy(movies, 2, tomorrowMovies, 0, movies.length - 2);
+        return tomorrowMovies;
+    }
     public static Movies getMovie(int id) {
-        if (id <= movies.length) {
+        if (id <= movies.length && id > 0) {
             return movies[id - 1];
         }
         return new Movies("Dummy",
@@ -59,15 +71,14 @@ public class MoviesDirectory {
                 "22:15");
     }
 
-    public static void ViewTrailer(Context c, int id) {
-        try {
-            Intent i = Intent.parseUri(getMovie(id).trailer.toString(), 0);
-            c.startActivity(i);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+    public static int getMovieIndex(Movies movie) {
+        for (int i=0; i<movies.length; i++) {
+            if (Objects.equals(movies[i].name, movie.name) && Objects.equals(movies[i].genre, movie.genre)) {
+                return i+1;
+            }
         }
+        return 0;
     }
-
     public static void ShowBooking(Context c, int id, String date) {
         Intent i = new Intent(c, SeatSelectionActivity.class);
         i.putExtra("id_key", id);
