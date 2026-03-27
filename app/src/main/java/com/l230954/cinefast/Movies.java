@@ -2,7 +2,9 @@ package com.l230954.cinefast;
 
 import android.net.Uri;
 
-public class Movies {
+import java.io.Serializable;
+
+public class Movies implements Serializable {
     public final String name;
     public final String genre;
     public final int imageId;

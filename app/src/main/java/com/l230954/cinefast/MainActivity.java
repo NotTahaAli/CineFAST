@@ -2,11 +2,9 @@ package com.l230954.cinefast;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,9 +17,8 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
 
     FragmentManager fragManager;
     HomeFragment fragHome;
+    SnacksFragment fragSnacks;
     SeatSelectionFragment fragSeatSelection;
-
-    ActivityResultLauncher<Intent> snacksLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +40,7 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragManager = getSupportFragmentManager();
         fragHome = (HomeFragment) fragManager.findFragmentById(R.id.fragHome);
         fragSeatSelection = (SeatSelectionFragment) fragManager.findFragmentById(R.id.fragSeatSelection);
-
-        snacksLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                this::handleSnacksResult
-        );
+        fragSnacks = (SnacksFragment) fragManager.findFragmentById(R.id.fragSnacks);
     }
 
     @Override
@@ -59,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragManager.beginTransaction()
                 .hide(fragHome)
                 .show(fragSeatSelection)
+                .hide(fragSnacks)
                 .addToBackStack("home")
                 .commit();
     }
@@ -71,12 +65,14 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragManager.beginTransaction()
                 .show(fragHome)
                 .hide(fragSeatSelection)
+                .hide(fragSnacks)
                 .commit();
     }
 
     @Override
     public void showBookingConfirmation(Movies movie, String date, ArrayList<String> seats, ArrayList<Snack> snacks) {
         showHome();
+        Toast.makeText(this, "Booking Confirmed!", Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, BookingConfirmationActivity.class);
         i.putExtra("id_key", MoviesDirectory.getMovieIndex(movie))
                 .putExtra("date_key", date)
@@ -93,18 +89,16 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         this.movie = movie;
         this.date = date;
         this.seats = seats;
-        Intent i = new Intent(this, SnacksActivity.class);
-        i.putExtra("id_key", MoviesDirectory.getMovieIndex(movie))
-                .putExtra("date_key", date);
-        startActivity(i);
-    }
-
-    public void handleSnacksResult(ActivityResult result) {
-        if (result.getResultCode() == RESULT_CANCELED) return;
-        showHome();
-        Intent i = result.getData();
-        if (i == null) return;
-        ArrayList<Snack> snacks = (ArrayList<Snack>) i.getSerializableExtra("snacks_key");
-        showBookingConfirmation(movie, date, seats, snacks);
+        Bundle arg = new Bundle();
+        arg.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
+        arg.putString("date_key", date);
+        arg.putStringArrayList("seats_key", seats);
+        fragSnacks.setArguments(arg);
+        fragManager.beginTransaction()
+                .hide(fragHome)
+                .hide(fragSeatSelection)
+                .show(fragSnacks)
+                .addToBackStack(null)
+                .commit();
     }
 }

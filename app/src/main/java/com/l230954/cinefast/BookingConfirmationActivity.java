@@ -2,10 +2,7 @@ package com.l230954.cinefast;
 
 import static android.view.View.GONE;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.icu.text.NumberFormat;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,7 +17,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class BookingConfirmationActivity extends AppCompatActivity {
     final float SEAT_COST = 16;
@@ -69,9 +65,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
     }
 
     private void hookButtons() {
-        btnBack.setOnClickListener(v -> {
-            finish();
-        });
+        btnBack.setOnClickListener(v -> finish());
         btnSend.setOnClickListener(v->{
             Intent i = new Intent(Intent.ACTION_SEND);
             i.putExtra(Intent.EXTRA_TEXT, getTicketText());

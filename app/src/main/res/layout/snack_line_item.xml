@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
                 android:textColor="@color/text_primary"
-                android:text="0"
+                android:text="@null"
                 android:textStyle="bold"
                 android:paddingHorizontal="10dp"
                 android:id="@+id/tvSnackQuantity"/>

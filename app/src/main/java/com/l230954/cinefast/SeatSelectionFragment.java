@@ -1,7 +1,5 @@
 package com.l230954.cinefast;
 
-import static android.app.Activity.RESULT_CANCELED;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

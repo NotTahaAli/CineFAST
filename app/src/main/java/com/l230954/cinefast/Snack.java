@@ -1,6 +1,8 @@
 package com.l230954.cinefast;
 
-public class Snack {
+import java.io.Serializable;
+
+public class Snack implements Serializable {
     public final String name;
     public final float price;
     public final String description;
