@@ -13,13 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
-    Movies[] movies;
+    public interface bookingHandler {
+        public void showBooking(Movies movie, String date);
+    }
+    ArrayList<Movies> movies;
     String date;
-    public MoviesAdapter(@NonNull Movies[] objects, String date) {
+    bookingHandler handler;
+    public MoviesAdapter(@NonNull ArrayList<Movies> objects, String date, bookingHandler handler) {
         this.movies = objects;
         this.date = date;
+        this.handler = handler;
     }
 
 
@@ -34,25 +40,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.tvMovieDescription.setText(movies[position].genre);
-        holder.tvMovieTitle.setText(movies[position].name);
-        holder.ivMovie.setImageResource(movies[position].imageId);
-        holder.trailer = movies[position].trailer.toString();
-        holder.movieIndex = MoviesDirectory.getMovieIndex(movies[position]);
+        Movies movie = movies.get(position);
+        holder.tvMovieDescription.setText(movie.genre);
+        holder.tvMovieTitle.setText(movie.name);
+        holder.ivMovie.setImageResource(movie.imageId);
+        holder.movie = movie;
     }
 
     @Override
     public int getItemCount() {
-        return movies.length;
+        return movies.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
+    public class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView tvMovieTitle, tvMovieDescription;
         ImageView ivMovie;
         MaterialButton bookBtn, trailerBtn;
-        String trailer;
-        int movieIndex;
+        Movies movie;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvMovieTitle = itemView.findViewById(R.id.tvMovieTitile);
@@ -63,11 +68,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
             trailerBtn.setOnClickListener(v->{
                 try {
-                    Intent i = Intent.parseUri(trailer, 0);
+                    Intent i = Intent.parseUri(movie.trailer.toString(), 0);
                     itemView.getContext().startActivity(i);
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
+            });
+
+            bookBtn.setOnClickListener(v->{
+                handler.showBooking(movie, date);
             });
         }
     }

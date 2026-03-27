@@ -30,7 +30,7 @@ public class NowShowingFragment extends Fragment {
 
     private void init(@NonNull View parentView) {
         rvMovies = parentView.findViewById(R.id.rvMovies);
-        adapter = new MoviesAdapter(MoviesDirectory.getTodayMovies(), CalenderHelper.GetDate(0));
+        adapter = new MoviesAdapter(MoviesDirectory.getTodayMovies(), CalenderHelper.GetDate(0), (MoviesAdapter.bookingHandler) this.requireActivity());
         rvMovies.setHasFixedSize(true);
         rvMovies.setLayoutManager(new LinearLayoutManager(this.requireContext()));
         rvMovies.setAdapter(adapter);

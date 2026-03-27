@@ -4,21 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MoviesDirectory {
 
-    public static final Movies[] movies = {
+    public static final ArrayList<Movies> movies = new ArrayList<>(Arrays.asList(
             new Movies(
-                    "The Dark Knight",
-                    "Action / 152 min",
-                    R.drawable.movie1,
-                    Uri.parse("https://www.youtube.com/watch?v=EXeTwQWrcwY"),
-                    "ScreenX",
-                    "Amana Mall",
-                    "Hall 1",
-                    "22:15"),
+                "The Dark Knight",
+                "Action / 152 min",
+                R.drawable.movie1,
+                Uri.parse("https://www.youtube.com/watch?v=EXeTwQWrcwY"),
+                "ScreenX",
+                "Amana Mall",
+                "Hall 1",
+                "22:15"),
             new Movies(
                     "Inception",
                     "Sci-Fi / 148 min",
@@ -45,22 +45,17 @@ public class MoviesDirectory {
                     "ScreenY",
                     "Packages Mall",
                     "Hall 1",
-                    "22:15")
-    };
+                    "22:15")));
 
-    public static Movies[] getTodayMovies() {
-        Movies[] todayMovies = new Movies[movies.length-1];
-        System.arraycopy(movies, 0, todayMovies, 0, movies.length - 1);
-        return todayMovies;
+    public static ArrayList<Movies> getTodayMovies() {
+        return new ArrayList<>(movies.subList(0, movies.size()-1));
     }
-    public static Movies[] getTomorrowMovies() {
-        Movies[] tomorrowMovies = new Movies[movies.length-2];
-        System.arraycopy(movies, 2, tomorrowMovies, 0, movies.length - 2);
-        return tomorrowMovies;
+    public static ArrayList<Movies> getTomorrowMovies() {
+        return new ArrayList<>(movies.subList(1, movies.size()));
     }
     public static Movies getMovie(int id) {
-        if (id <= movies.length && id > 0) {
-            return movies[id - 1];
+        if (id <= movies.size() && id > 0) {
+            return movies.get(id - 1);
         }
         return new Movies("Dummy",
                 "Action / 0 min",
@@ -72,12 +67,7 @@ public class MoviesDirectory {
     }
 
     public static int getMovieIndex(Movies movie) {
-        for (int i=0; i<movies.length; i++) {
-            if (Objects.equals(movies[i].name, movie.name) && Objects.equals(movies[i].genre, movie.genre)) {
-                return i+1;
-            }
-        }
-        return 0;
+        return movies.indexOf(movie) + 1;
     }
     public static void ShowBooking(Context c, int id, String date) {
         Intent i = new Intent(c, SeatSelectionActivity.class);
