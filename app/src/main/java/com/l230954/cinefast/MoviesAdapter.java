@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     public interface bookingHandler {
-        public void showBooking(Movies movie, String date);
+        void showBooking(Movies movie, String date);
     }
     ArrayList<Movies> movies;
     String date;
@@ -75,9 +75,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 }
             });
 
-            bookBtn.setOnClickListener(v->{
-                handler.showBooking(movie, date);
-            });
+            bookBtn.setOnClickListener(v-> handler.showBooking(movie, date));
         }
     }
 }

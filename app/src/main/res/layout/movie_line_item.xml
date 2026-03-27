@@ -12,7 +12,8 @@
         android:layout_marginEnd="10dp"
         android:src="@drawable/movie1"
         android:id="@+id/ivMovie"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        android:contentDescription="@string/movie_title_image"/>
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
