@@ -27,6 +27,15 @@ public class MoviesDirectory {
     public static ArrayList<Movies> getTomorrowMovies() {
         return new ArrayList<>(movies.subList(1, movies.size()));
     }
+
+    public static Movies getMovieFromName(String name) {
+        for (Movies movie : movies) {
+            if (movie.name.equals(name)) {
+                return movie;
+            }
+        }
+        return null;
+    }
     public static Movies getMovie(int id) {
         if (id <= movies.size() && id > 0) {
             return movies.get(id - 1);

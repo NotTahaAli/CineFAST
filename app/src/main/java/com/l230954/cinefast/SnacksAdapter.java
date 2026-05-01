@@ -44,7 +44,7 @@ public class SnacksAdapter extends ArrayAdapter<Snack> {
         TextView tvSnackPrice = convertView.findViewById(R.id.tvSnackPrice);
         TextView tvSnackQuantity = convertView.findViewById(R.id.tvSnackQuantity);
 
-        ivSnackImage.setImageResource(snack.drawableId);
+        ivSnackImage.setImageResource(snack.imageId);
         tvSnackName.setText(snack.name);
         tvSnackDetails.setText(snack.description);
         tvSnackPrice.setText(CurrencyHelper.formatCurrency(snack.price));

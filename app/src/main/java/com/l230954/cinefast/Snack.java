@@ -6,13 +6,13 @@ public class Snack implements Serializable {
     public final String name;
     public final float price;
     public final String description;
-    public final int drawableId;
+    public final int imageId;
     public int quantity;
     public Snack(String name, float price, String description, int drawableId) {
         this.name = name;
         this.price = price;
         this.description = description;
-        this.drawableId = drawableId;
+        this.imageId = drawableId;
         quantity = 0;
     }
 }

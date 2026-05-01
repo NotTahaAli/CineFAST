@@ -63,11 +63,10 @@ public class SnacksFragment extends Fragment {
     }
 
     private void reset() {
-        snacks = new ArrayList<>();
-        snacks.add(new Snack(getResources().getString(R.string.snacks1), 5.0f, getResources().getString(R.string.snacks1_description), R.drawable.snacks1));
-        snacks.add(new Snack(getResources().getString(R.string.snacks2), 10.0f, getResources().getString(R.string.snacks2_description), R.drawable.snacks2));
-        snacks.add(new Snack(getResources().getString(R.string.snacks3), 15.0f, getResources().getString(R.string.snacks3_description), R.drawable.snacks3));
-        snacks.add(new Snack(getResources().getString(R.string.snacks4), 2.5f, getResources().getString(R.string.snacks4_description), R.drawable.snacks4));
+        DBManager manager = new DBManager(context);
+        manager.open();
+        snacks = manager.getSnacks();
+        manager.close();
         adapter = new SnacksAdapter(context, snacks);
         lvSnacks.setAdapter(adapter);
     }

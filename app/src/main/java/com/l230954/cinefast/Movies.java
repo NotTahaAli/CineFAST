@@ -41,8 +41,7 @@ public class Movies implements Serializable {
                     time = obj.getString("time");
             Bitmap image = null;
             if (obj.has("imageBase64")) {
-                byte[] imageBytes = Base64.decode(obj.getString("imageBase64"), Base64.DEFAULT);
-                image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                image = CineFAST.Base64ToBitmap(obj.getString("imageBase64"));
             } else if (obj.has("imageAssetName")) {
                 image = CineFAST.loadBitmap(obj.getString("imageAssetName"));
             } else if (obj.has("imageResourceId")) {
