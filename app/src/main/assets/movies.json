@@ -1,0 +1,42 @@
+[
+  {
+    "name": "The Dark Knight",
+    "genre": "Action / 152 min",
+    "imageAssetName": "movie1.jpg",
+    "trailer": "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+    "screen": "ScreenX",
+    "theater": "Amana Mall",
+    "hall": "Hall 1",
+    "time": "22:15"
+  },
+  {
+    "name": "Inception",
+    "genre": "Sci-Fi / 148 min",
+    "imageAssetName": "movie2.webp",
+    "trailer": "https://www.youtube.com/watch?v=YoHD9XEInc0",
+    "screen": "ScreenY",
+    "theater": "Amana Mall",
+    "hall": "Hall 2",
+    "time": "22:15"
+  },
+  {
+    "name": "Interstellar",
+    "genre": "Sci-Fi / 169 min",
+    "imageAssetName": "movie3.webp",
+    "trailer": "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+    "screen": "ScreenX",
+    "theater": "Amana Mall",
+    "hall": "Hall 2",
+    "time": "16:15"
+  },
+  {
+    "name": "Shawshank Redemption",
+    "genre": "Drama / 142 min",
+    "imageAssetName": "movie4.webp",
+    "trailer": "https://www.youtube.com/watch?v=PLl99DlL6b4",
+    "screen": "ScreenY",
+    "theater": "Packages Mall",
+    "hall": "Hall 1",
+    "time": "22:15"
+  }
+]

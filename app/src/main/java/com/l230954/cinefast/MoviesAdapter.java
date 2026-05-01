@@ -40,7 +40,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         Movies movie = movies.get(position);
         holder.tvMovieDescription.setText(movie.genre);
         holder.tvMovieTitle.setText(movie.name);
-        holder.ivMovie.setImageResource(movie.imageId);
+
+        holder.ivMovie.setImageBitmap(movie.image);
         holder.movie = movie;
     }
 

@@ -139,7 +139,7 @@ public class SeatSelectionFragment extends Fragment {
     }
 
     private void setMovieData() {
-        ivBackground.setImageResource(movie.imageId);
+        ivBackground.setImageBitmap(movie.image);
         tvHall.setText(movie.hall);
         tvDate.setText(date);
         tvTheater.setText(movie.theater);

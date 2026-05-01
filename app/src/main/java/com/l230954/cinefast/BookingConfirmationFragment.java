@@ -120,7 +120,7 @@ public class BookingConfirmationFragment extends Fragment {
     }
 
     private void setMovieData() {
-        ivMovie.setImageResource(movie.imageId);
+        ivMovie.setImageBitmap(movie.image);
         tvHall.setText(movie.hall);
         tvDate.setText(date);
         tvTheater.setText(movie.theater);

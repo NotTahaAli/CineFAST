@@ -9,6 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
+        android:name="com.l230954.cinefast.CineFAST"
         android:theme="@style/Theme.CineFAST">
         <activity
             android:name=".MainActivity"
