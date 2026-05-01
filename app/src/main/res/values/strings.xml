@@ -42,4 +42,17 @@
     <string name="snacks4_description">Large</string>
     <string name="movie_title_image">Movie Title Image</string>
     <string name="view_last_booking">View Last Booking</string>
+
+    <!-- Login/Signup Strings -->
+    <string name="login_title">Log In</string>
+    <string name="signup_title">Sign Up</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm password</string>
+    <string name="email_hint">Text your email</string>
+    <string name="password_hint">Text your password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="dont_have_account">Don\'t have an account? </string>
+    <string name="register">Register</string>
 </resources>
