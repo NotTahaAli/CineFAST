@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -44,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         init();
-        checkLoggedIn();
 
         btnBack.setOnClickListener(v -> finish());
         
@@ -80,6 +80,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkLoggedIn();
     }
 
     private void init() {

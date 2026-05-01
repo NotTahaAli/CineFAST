@@ -49,10 +49,13 @@
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="confirm_password_label">Confirm password</string>
-    <string name="email_hint">Text your email</string>
-    <string name="password_hint">Text your password</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="password_hint">Enter your password</string>
     <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="dont_have_account">Don\'t have an account? </string>
     <string name="register">Register</string>
+    <string name="name_label">Name</string>
+    <string name="name_hint">Enter your name</string>
+    <string name="firebase_database_url">https://cinefast-750e3-default-rtdb.asia-southeast1.firebasedatabase.app/</string>
 </resources>
