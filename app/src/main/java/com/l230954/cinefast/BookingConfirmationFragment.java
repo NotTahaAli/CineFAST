@@ -35,7 +35,7 @@ public class BookingConfirmationFragment extends Fragment {
     TextView tvTheater, tvHall, tvDate, tvTime, tvScreen, tvTitle, tvTotal, tvTicketsDetails, tvTicketsPrices, tvSnacksDetails, tvSnacksPrices, tvSnacksHeader;
     MaterialButton btnSend;
 
-    FragmentController controller;
+    NavigationController controller;
     Context context;
 
     @Nullable
@@ -80,7 +80,7 @@ public class BookingConfirmationFragment extends Fragment {
     }
 
     private void hookButtons() {
-        btnBack.setOnClickListener(v -> controller.showHome());
+        btnBack.setOnClickListener(v -> controller.goBackToHome());
         btnSend.setOnClickListener(v->{
             Intent i = new Intent(Intent.ACTION_SEND);
             i.putExtra(Intent.EXTRA_TEXT, getTicketText());
@@ -99,7 +99,7 @@ public class BookingConfirmationFragment extends Fragment {
 
     private void init(View view) {
         context = requireContext();
-        controller = (FragmentController) requireActivity();
+        controller = (NavigationController) requireActivity();
         btnBack = view.findViewById(R.id.btnBack);
         btnSend = view.findViewById(R.id.btnSend);
 

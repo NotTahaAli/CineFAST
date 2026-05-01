@@ -21,7 +21,7 @@ public class SnacksFragment extends Fragment {
     ListView lvSnacks;
     SnacksAdapter adapter;
     Context context;
-    FragmentController controller;
+    NavigationController controller;
 
     @Nullable
     @Override
@@ -45,7 +45,7 @@ public class SnacksFragment extends Fragment {
         btnConfirm.setOnClickListener(v->{
             Bundle args = getArguments();
             if (args == null) {
-                controller.showHome();
+                controller.goBackToHome();
             } else {
                 Movies movie = MoviesDirectory.getMovie(args.getInt("id_key", 0));
                 String date = args.getString("date_key");
@@ -55,7 +55,7 @@ public class SnacksFragment extends Fragment {
         });
     }
     private void init(View parent) {
-        controller = (FragmentController) this.getActivity();
+        controller = (NavigationController) this.getActivity();
         context = requireContext();
         btnConfirm = parent.findViewById(R.id.btnConfirm);
         lvSnacks = parent.findViewById(R.id.lvSnacks);

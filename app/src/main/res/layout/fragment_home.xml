@@ -26,7 +26,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/ivMenu"
-            android:src="@drawable/menu"/>
+            android:src="@drawable/menu"
+            android:contentDescription="Menu" />
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
@@ -50,13 +51,4 @@
         android:layout_weight="1"
         android:id="@+id/vpMoviesList"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/view_last_booking"
-        app:backgroundTint="@color/btn_primary_bg"
-        android:textColor="@color/btn_primary_txt"
-        android:textSize="20sp"
-        android:id="@+id/btnLastBooking"
-        android:visibility="gone"/>
 </LinearLayout>

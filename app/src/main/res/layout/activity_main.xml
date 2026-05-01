@@ -1,33 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="@color/background">
-    <androidx.fragment.app.FragmentContainerView
+
+    <RelativeLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragSeatSelection"
-        android:name="com.l230954.cinefast.SeatSelectionFragment"
-        tools:layout="@layout/fragment_seat_selection"/>
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
+        android:paddingVertical="30dp">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragSeatSelection"
+            android:name="com.l230954.cinefast.SeatSelectionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_seat_selection" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragSnacks"
+            android:name="com.l230954.cinefast.SnacksFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_snacks" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragBookingConfirmation"
+            android:name="com.l230954.cinefast.BookingConfirmationFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_booking_confirmation" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragHome"
+            android:name="com.l230954.cinefast.HomeFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_home" />
+    </RelativeLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/fragSnacks"
-        android:name="com.l230954.cinefast.SnacksFragment"
-        tools:layout="@layout/fragment_snacks"/>
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragBookingConfirmation"
-        android:name="com.l230954.cinefast.BookingConfirmationFragment"
-        tools:layout="@layout/fragment_booking_confirmation"/>
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragHome"
-        android:name="com.l230954.cinefast.HomeFragment"
-        tools:layout="@layout/fragment_home"/>
-</RelativeLayout>
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"
+        android:background="@color/background"
+        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/white"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -30,7 +30,7 @@ public class SeatSelectionFragment extends Fragment {
     String date;
     boolean isToday;
 
-    FragmentController controller;
+    NavigationController controller;
 
     MaterialButton snacksBtn, bookBtn;
     ImageView btnBack, ivBackground;
@@ -86,7 +86,7 @@ public class SeatSelectionFragment extends Fragment {
     }
 
     private void hookButtons() {
-        btnBack.setOnClickListener(v-> controller.showHome());
+        btnBack.setOnClickListener(v-> controller.goBackToHome());
         if (isToday) {
             bookBtn.setText(R.string.book_seats);
             bookBtn.setEnabled(true);
@@ -135,7 +135,7 @@ public class SeatSelectionFragment extends Fragment {
 
         grid = parentView.findViewById(R.id.grid);
 
-        controller = (FragmentController) this.getActivity();
+        controller = (NavigationController) this.getActivity();
     }
 
     private void setMovieData() {

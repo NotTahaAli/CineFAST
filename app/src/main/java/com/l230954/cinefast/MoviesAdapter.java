@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
     ArrayList<Movies> movies;
     String date;
-    FragmentController handler;
-    public MoviesAdapter(@NonNull ArrayList<Movies> objects, String date, FragmentController handler) {
+    NavigationController handler;
+    public MoviesAdapter(@NonNull ArrayList<Movies> objects, String date, NavigationController handler) {
         this.movies = objects;
         this.date = date;
         this.handler = handler;

@@ -1,18 +1,35 @@
 package com.l230954.cinefast;
 
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements FragmentController {
+public class MainActivity extends AppCompatActivity implements NavigationController {
 
     FragmentManager fragManager;
     HomeFragment fragHome;
@@ -20,20 +37,26 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
     SeatSelectionFragment fragSeatSelection;
     BookingConfirmationFragment fragBookingConfirmation;
 
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    FirebaseAuth auth;
+    DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         init();
-
-        showHome();
+        setupDrawer();
+        fetchUserInfo();
+        goBackToHome();
     }
 
     private void init() {
@@ -42,6 +65,65 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
         fragSeatSelection = (SeatSelectionFragment) fragManager.findFragmentById(R.id.fragSeatSelection);
         fragSnacks = (SnacksFragment) fragManager.findFragmentById(R.id.fragSnacks);
         fragBookingConfirmation = (BookingConfirmationFragment) fragManager.findFragmentById(R.id.fragBookingConfirmation);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        auth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance(getString(R.string.firebase_database_url)).getReference();
+    }
+
+    private void setupDrawer() {
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                showHome();
+            } else if (id == R.id.nav_bookings) {
+                showMyBookings();
+            } else if (id == R.id.nav_logout) {
+                logout();
+            }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+    }
+
+    public void openDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    private void fetchUserInfo() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            View headerView = navigationView.getHeaderView(0);
+            TextView tvUserName = headerView.findViewById(R.id.tvUserName);
+            TextView tvUserEmail = headerView.findViewById(R.id.tvUserEmail);
+
+            tvUserEmail.setText(user.getEmail());
+
+            databaseReference.child("users").child(user.getUid()).child("name")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                tvUserName.setText(snapshot.getValue(String.class));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {}
+                    });
+        }
+    }
+
+    private void logout() {
+        auth.signOut();
+        // Clear remember me
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean("rememberMe", false).apply();
+        
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -61,8 +143,13 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
 
     @Override
     public void showHome() {
+        // TODO: Hide My Bookings Fragment
+    }
+
+    @Override
+    public void goBackToHome() {
         if (fragManager.getBackStackEntryCount() > 0) {
-            fragManager.popBackStack();
+            fragManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         fragManager.beginTransaction()
                 .hide(fragSeatSelection)
@@ -104,5 +191,23 @@ public class MainActivity extends AppCompatActivity implements FragmentControlle
                 .show(fragSnacks)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void showMyBookings() {
+        // TODO: Remove Below Code and Show My Bookings Fragment
+        SharedPreferences sPref = getSharedPreferences("last_booking", MODE_PRIVATE);
+        if (!sPref.contains("name")) {
+            new AlertDialog.Builder(this).setTitle("No Last Booking").setMessage("You haven't made any bookings yet.").show();
+        } else {
+            String name = sPref.getString("name", "");
+            int seats = sPref.getInt("seats", 0);
+            float totalPrice = sPref.getFloat("total", 0);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Last Booking")
+                    .setMessage("Movie: " + name + "\nSeats: " + seats + "\nTotal Price: " + CurrencyHelper.formatCurrency(totalPrice))
+                    .create().show();
+        }
     }
 }

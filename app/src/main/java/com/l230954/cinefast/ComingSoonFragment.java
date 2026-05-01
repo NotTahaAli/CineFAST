@@ -30,7 +30,7 @@ public class ComingSoonFragment extends Fragment {
 
     private void init(@NonNull View parentView) {
         rvMovies = parentView.findViewById(R.id.rvMovies);
-        adapter = new MoviesAdapter(MoviesDirectory.getTomorrowMovies(), CalenderHelper.GetDate(1), (FragmentController) this.requireActivity());
+        adapter = new MoviesAdapter(MoviesDirectory.getTomorrowMovies(), CalenderHelper.GetDate(1), (NavigationController) this.requireActivity());
         rvMovies.setHasFixedSize(true);
         rvMovies.setLayoutManager(new LinearLayoutManager(this.requireContext()));
         rvMovies.setAdapter(adapter);
