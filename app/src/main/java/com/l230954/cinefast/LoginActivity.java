@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+            String password = etPassword.getText().toString();
             boolean rememberMe = cbRememberMe.isChecked();
 
             if (email.isEmpty() || password.isEmpty()) {
