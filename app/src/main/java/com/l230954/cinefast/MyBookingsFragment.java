@@ -2,10 +2,14 @@ package com.l230954.cinefast;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +26,7 @@ import com.google.firebase.database.Query;
 
 public class MyBookingsFragment extends Fragment {
     ImageView btnMenu;
+    EditText etSearch;
     RecyclerView rvBookings;
     NavigationController controller;
     Context context;
@@ -44,6 +49,31 @@ public class MyBookingsFragment extends Fragment {
         btnMenu.setOnClickListener(v -> {
             controller.showMenu();
         });
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                String search = etSearch.getText().toString().trim();
+                Query query = reference;
+                if (!search.isEmpty()) {
+                    query = query.orderByChild("movie").startAt(search).endAt(search + "\uf8ff");
+                }
+                FirebaseRecyclerOptions<Bookings> options = new FirebaseRecyclerOptions.Builder<Bookings>()
+                        .setQuery(query, Bookings.class).build();
+                adapter.updateOptions(options);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+        });
     }
 
     private void init(View view) {
@@ -51,6 +81,7 @@ public class MyBookingsFragment extends Fragment {
         controller = (NavigationController) requireActivity();
         btnMenu = view.findViewById(R.id.btnMenu);
         rvBookings = view.findViewById(R.id.rvBookings);
+        etSearch = view.findViewById(R.id.etSearch);
 
         database = FirebaseDatabase.getInstance(getString(R.string.firebase_database_url));
         auth = FirebaseAuth.getInstance();

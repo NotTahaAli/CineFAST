@@ -1,6 +1,7 @@
 package com.l230954.cinefast;
 
 import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -43,6 +44,8 @@ public class BookingsAdapter extends FirebaseRecyclerAdapter<Bookings, BookingsA
         try {
             if (CalenderHelper.hasPassed(model.getDate(), model.getTime())) {
                 holder.ivRemoveBooking.setVisibility(INVISIBLE);
+            } else {
+                holder.ivRemoveBooking.setVisibility(VISIBLE);
             }
         } catch (ParseException e) {
             throw new RuntimeException(e);

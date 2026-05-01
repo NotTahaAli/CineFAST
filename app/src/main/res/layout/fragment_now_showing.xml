@@ -18,6 +18,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rvMovies"/>
+        android:id="@+id/rvMovies"
+        tools:listitem="@layout/movie_line_item"/>
 
 </LinearLayout>
