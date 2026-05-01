@@ -68,6 +68,7 @@ public class BookingsAdapter extends FirebaseRecyclerAdapter<Bookings, BookingsA
                 buttonEnabled[0] = true;
                 Toast.makeText(context, "Failed to remove booking, " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }).addOnSuccessListener(unused -> {
+                Toast.makeText(context, "Booking removed successfully.", Toast.LENGTH_SHORT).show();
                 buttonEnabled[0] = true;
             });
         });
