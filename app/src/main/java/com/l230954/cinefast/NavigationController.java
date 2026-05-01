@@ -9,4 +9,6 @@ public interface NavigationController {
     void showBookingConfirmation(Movies movie, String date, ArrayList<String> seats, ArrayList<Snack> snacks);
     void showSnacks(Movies movie, String date, ArrayList<String> seats);
     void showMyBookings();
+
+    void showMenu();
 }

@@ -34,19 +34,22 @@ public class MoviesDirectory {
                 return movie;
             }
         }
-        return null;
+        return DefaultMovie;
     }
+
+    private static final Movies DefaultMovie = new Movies("Dummy",
+       "Action / 0 min",
+        (Bitmap) null,
+        Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
+        "ScreenY",
+        "Amana Mall",
+        "Hall 2",
+        "22:15");
     public static Movies getMovie(int id) {
         if (id <= movies.size() && id > 0) {
             return movies.get(id - 1);
         }
-        return new Movies("Dummy",
-                "Action / 0 min",
-                (Bitmap) null, Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
-                "ScreenY",
-                "Amana Mall",
-                "Hall 2",
-                "22:15");
+        return DefaultMovie;
     }
 
     public static int getMovieIndex(Movies movie) {

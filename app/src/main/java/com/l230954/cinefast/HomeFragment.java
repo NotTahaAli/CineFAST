@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     private void hookButtons() {
         ivMenu.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).openDrawer();
+                ((MainActivity) getActivity()).showMenu();
             }
         });
     }

@@ -41,6 +41,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/fragment_home" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fragMyBookings"
+            android:name="com.l230954.cinefast.MyBookingsFragment"
+            tools:layout="@layout/fragment_my_bookings"/>
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView

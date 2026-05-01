@@ -58,4 +58,5 @@
     <string name="name_label">Name</string>
     <string name="name_hint">Enter your name</string>
     <string name="firebase_database_url">https://cinefast-750e3-default-rtdb.asia-southeast1.firebasedatabase.app/</string>
+    <string name="my_bookings">My Bookings</string>
 </resources>

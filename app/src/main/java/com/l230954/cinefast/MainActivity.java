@@ -1,6 +1,5 @@
 package com.l230954.cinefast;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
     SnacksFragment fragSnacks;
     SeatSelectionFragment fragSeatSelection;
     BookingConfirmationFragment fragBookingConfirmation;
+    MyBookingsFragment fragMyBookings;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
         setupDrawer();
         fetchUserInfo();
         goBackToHome();
+        fragManager.beginTransaction()
+            .hide(fragMyBookings)
+            .commit();
     }
 
     private void init() {
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
         fragSeatSelection = (SeatSelectionFragment) fragManager.findFragmentById(R.id.fragSeatSelection);
         fragSnacks = (SnacksFragment) fragManager.findFragmentById(R.id.fragSnacks);
         fragBookingConfirmation = (BookingConfirmationFragment) fragManager.findFragmentById(R.id.fragBookingConfirmation);
+        fragMyBookings = (MyBookingsFragment) fragManager.findFragmentById(R.id.fragMyBookings);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -87,7 +91,8 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
         });
     }
 
-    public void openDrawer() {
+    @Override
+    public void showMenu() {
         drawerLayout.openDrawer(GravityCompat.START);
     }
 
@@ -143,7 +148,11 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
 
     @Override
     public void showHome() {
-        // TODO: Hide My Bookings Fragment
+        if (fragMyBookings.isHidden()) return;
+        fragManager.beginTransaction()
+                .hide(fragMyBookings)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -164,19 +173,27 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
         if (snacks != null && fragManager.getBackStackEntryCount() > 0) {
             fragManager.popBackStack();
         }
-        Toast.makeText(this, "Booking Confirmed!", Toast.LENGTH_SHORT).show();
-        Bundle args = new Bundle();
-        args.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
-        args.putString("date_key", date);
-        args.putStringArrayList("seats_key", seats);
-        args.putSerializable("snacks_key", snacks);
-        fragBookingConfirmation.setArguments(args);
-        fragManager.beginTransaction()
-                .hide(fragSnacks)
-                .hide(fragSeatSelection)
-                .hide(fragHome)
-                .show(fragBookingConfirmation)
-                .commit();
+        assert auth.getCurrentUser() != null;
+        Bookings booking = new Bookings(movie.name, date, movie.time, seats.size());
+        databaseReference.child("bookings").child(auth.getCurrentUser().getUid()).push().setValue(booking.toMap())
+            .addOnSuccessListener(v->{
+                Toast.makeText(this, "Booking Confirmed!", Toast.LENGTH_SHORT).show();
+                Bundle args = new Bundle();
+                args.putInt("id_key", MoviesDirectory.getMovieIndex(movie));
+                args.putString("date_key", date);
+                args.putStringArrayList("seats_key", seats);
+                args.putSerializable("snacks_key", snacks);
+                fragBookingConfirmation.setArguments(args);
+                fragManager.beginTransaction()
+                        .hide(fragSnacks)
+                        .hide(fragSeatSelection)
+                        .hide(fragHome)
+                        .show(fragBookingConfirmation)
+                        .commit();
+            })
+            .addOnFailureListener(e->{
+                Toast.makeText(this, "Failed to make Booking, " + e.getMessage() + "!", Toast.LENGTH_SHORT).show();
+            });
     }
 
     @Override
@@ -195,19 +212,10 @@ public class MainActivity extends AppCompatActivity implements NavigationControl
 
     @Override
     public void showMyBookings() {
-        // TODO: Remove Below Code and Show My Bookings Fragment
-        SharedPreferences sPref = getSharedPreferences("last_booking", MODE_PRIVATE);
-        if (!sPref.contains("name")) {
-            new AlertDialog.Builder(this).setTitle("No Last Booking").setMessage("You haven't made any bookings yet.").show();
-        } else {
-            String name = sPref.getString("name", "");
-            int seats = sPref.getInt("seats", 0);
-            float totalPrice = sPref.getFloat("total", 0);
-
-            new AlertDialog.Builder(this)
-                    .setTitle("Last Booking")
-                    .setMessage("Movie: " + name + "\nSeats: " + seats + "\nTotal Price: " + CurrencyHelper.formatCurrency(totalPrice))
-                    .create().show();
-        }
+        if (!fragMyBookings.isHidden()) return;
+        fragManager.beginTransaction()
+                .show(fragMyBookings)
+                .addToBackStack(null)
+                .commit();
     }
 }
